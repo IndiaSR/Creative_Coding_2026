@@ -1,0 +1,65 @@
+// TEXT_TO_POINT variation 07
+
+// change = lines between points (almost like a wireframe path)
+// Ellipse is now line to next point (Line 47)
+// typeface - Graphik_Medium
+// Changes the sampleF to 0.01 to create jaggered abstract effect
+
+let myFont;
+let points;
+let sampleF;
+
+function preload() {
+  myFont = loadFont("data/Graphik-Medium-Trial.otf");
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+
+  sampleF = 0.01;//  CHANGE
+
+//  // (string, x, y, fontSize, options)
+  points = myFont.textToPoints('Melbourne', (width / 5) - 100, height / 2, 200, {
+    sampleFactor: sampleF,
+    simplifyThreshold: 0
+  });
+
+  // noLoop() tells p5.js to only run the draw() function exactly one time.
+  noLoop();
+}
+
+function draw() {
+  background(240); // Light gray background
+
+
+  stroke(50, 0, 0);       // Red lines
+  strokeWeight(2);         // 2 pixels thick
+  //line(width / 2, 0, width / 2, height);  // Vertical center
+  //line(0, height / 2, width, height / 2); // Horizontal center
+       
+  stroke(0);     
+  strokeWeight(1);
+  noFill();
+
+  // A 'for' loop lets us iterate over every single point inside our 'points' array
+  for (let i = 0; i < points.length; i++) {
+       let p = points[i];
+       let next = points[(i + 1) % points.length]; // CHANGE
+       line(p.x, p.y, next.x, next.y); // CHANGE
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+
+  // When the window resizes, we should recalculate the text points 
+  // so they are positioned correctly based on the new width and height!
+  points = myFont.textToPoints('Melbourne', (width / 4) - 200, height / 2, 300, {
+    sampleFactor: sampleF,
+    simplifyThreshold: 0
+  });
+
+  // Since we called noLoop() earlier, draw() isn't running automatically. 
+  // We must manually trigger a redraw using this command!
+  redraw();
+}
